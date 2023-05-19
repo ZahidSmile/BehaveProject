@@ -18,7 +18,7 @@ def openHomePage(context):
 
 @then('Login with session')
 def step_impl(context):
-    with open('D:\BehaveProject\\features\cred.json') as f:
+    with open('D:\BehaveProject\cred.json') as f:
         data = json.load(f)
     cookie = {'name': 'sut', 'value': data['session']}
     context.driver.add_cookie(cookie)

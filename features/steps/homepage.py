@@ -1,9 +1,8 @@
 from behave import *
 import pathlib
 from selenium import webdriver
-import time
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
+import json
 
 @given('Launch chrome browser')
 def launchBrowser(context):
@@ -15,15 +14,12 @@ def launchBrowser(context):
 @when('open savyour homepage')
 def openHomePage(context):
     context.driver.maximize_window()
-    context.driver.get("https://savyour.com.pk/")
+    context.driver.get("https://staging.savyour.com.pk/")
 
-@then('verify that logo is present on page')
-def verifyLogo(context):
-    time.sleep(5)
-    status = context.driver.find_element(By.CSS_SELECTOR, ".desktop-logo").is_displayed()
-    assert status is True
-
-@then('close browser')
+@then('Login with session')
 def step_impl(context):
-    context.driver.close()
-
+    with open('D:\BehaveProject\\features\cred.json') as f:
+        data = json.load(f)
+    cookie = {'name': 'sut', 'value': data['session']}
+    context.driver.add_cookie(cookie)
+    context.driver.refresh()

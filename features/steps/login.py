@@ -1,20 +1,25 @@
 from behave import *
-import time
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+import pathlib
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import json
 
-@when('Search Field is Available')
-def findSearch(context):
-    time.sleep(5)
-    status = context.driver.find_element(By.CSS_SELECTOR, "#searchKeywordText").is_displayed()
-    assert status is True
+@given('Launch chrome browser')
+def launchBrowser(context):
+    Chrome = pathlib.Path("C:\chromedriver\chromedriver.exe")
+    if Chrome.exists():
+        op = webdriver.ChromeOptions()
+        context.driver = webdriver.Chrome(service=Service("C:\chromedriver\chromedriver.exe"), options=op)
 
+@when('open savyour homepage')
+def openHomePage(context):
+    context.driver.maximize_window()
+    context.driver.get("https://staging.savyour.com.pk/")
 
-@then('Search brand on it')
-def searchBrand(context):
-    search = context.driver.find_element(By.CSS_SELECTOR, "#searchKeywordText")
-    search.click()
-    search.send_keys("daraz")
-    time.sleep(2)
-    search.send_keys(Keys.RETURN)
-
+@then('Login with session')
+def step_impl(context):
+    with open('D:\BehaveProject\cred.json') as f:
+        data = json.load(f)
+    cookie = {'name': 'sut', 'value': data['session']}
+    context.driver.add_cookie(cookie)
+    context.driver.refresh()

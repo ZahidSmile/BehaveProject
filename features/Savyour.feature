@@ -7,4 +7,3 @@ Feature: Login on savyour
   Scenario: Verify Search Field & Search Brand
     When Search Field is Available
     Then Search brand on it
-

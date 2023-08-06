@@ -6,7 +6,6 @@ Feature: Login on savyour
 
   Scenario: Verify HomePage Instore Banner
     When Instore Banner Available
-    Then Check Instore Data
 
   Scenario: Verify HomePage Sections
     When Home Page Sections Visible

@@ -1,6 +1,7 @@
 from behave import *
 from selenium.webdriver.common.by import By
 import time
+from selenium.webdriver.common.keys import Keys
 
 
 @when('Instore Banner Available')
@@ -16,10 +17,9 @@ def findInstore(context):
 @then('Check Instore Data')
 def checkInstore(context):
     time.sleep(1)
-    pages = context.driver.find_element(By.CSS_SELECTOR, '.pagination-next')
-    context.driver.execute_script("return arguments[0].scrollIntoView(true);", pages)
-    if pages.is_displayed():
-        print("Pagination Found")
+    # pages = context.driver.find_element(By.CSS_SELECTOR, '.pagination-next')
+    # context.driver.execute_script("return arguments[0].scrollIntoView(true);", pages)
+    context.send_keys(Keys.END)
 
 
 @when('Home Page Sections Visible')

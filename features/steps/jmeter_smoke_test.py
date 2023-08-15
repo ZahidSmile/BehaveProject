@@ -1,10 +1,14 @@
 from behave import given, when, then
 import os
 import subprocess
+import json
 
-jmeter_path = 'D:/apache-jmeter-5.4.1/bin/jmeter.bat'
-jmx_file = 'D:/apache-jmeter-5.4.1/Staging-Smoke-v5.jmx'
-jtl_file = os.path.join('D:', 'reports', 'jmeter_results.jtl')
+
+with open('D:\BehaveProject\data.json') as f:
+    data = json.load(f)
+    jmeter_path = data['jmeter_path']
+    jmx_file = data['jmx_file']
+    jtl_file = data['jtl_file']
 
 # Delete the existing jtl file if it exists
 if os.path.exists(jtl_file):

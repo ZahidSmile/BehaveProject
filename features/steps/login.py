@@ -2,24 +2,42 @@ from behave import *
 import pathlib
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import time
 import json
 
-@given('Launch chrome browser')
-def launchBrowser(context):
+with open('D:\BehaveProject\cred.json') as f:
+    data = json.load(f)
+
+@given('the user launches the Chrome browser')
+def before_all(context):
     Chrome = pathlib.Path("C:\chromedriver\chromedriver.exe")
     if Chrome.exists():
         op = webdriver.ChromeOptions()
         context.driver = webdriver.Chrome(service=Service("C:\chromedriver\chromedriver.exe"), options=op)
 
-@when('open savyour homepage')
+
+@when('the user opens the Savyour website')
 def openHomePage(context):
     context.driver.maximize_window()
-    context.driver.get("https://staging.savyour.com.pk/")
+    context.driver.get(data['pkurl'])
 
-@then('Login with session')
+
+@then('the user logs in with phone number')
 def step_impl(context):
-    with open('D:\BehaveProject\cred.json') as f:
-        data = json.load(f)
-    cookie = {'name': 'sut', 'value': data['session']}
-    context.driver.add_cookie(cookie)
-    context.driver.refresh()
+    time.sleep(2)
+    context.driver.find_element(By.CSS_SELECTOR, '.non-auth-section .Continue-with-Phone-Number').click()
+    time.sleep(2)
+    context.driver.find_element(By.CSS_SELECTOR, '#otp-number').click()
+    time.sleep(2)
+    context.driver.find_element(By.CSS_SELECTOR, '.countryPhoneNumber').send_keys(data['pkphone'])
+    context.driver.find_element(By.CSS_SELECTOR, '#loginOTP').click()
+    time.sleep(4)
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-1').click()
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-1').send_keys(data['pkcode'][0])
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-2').send_keys(data['pkcode'][1])
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-3').send_keys(data['pkcode'][2])
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-4').send_keys(data['pkcode'][3])
+    context.driver.find_element(By.CSS_SELECTOR, '.otpCode-5').send_keys(data['pkcode'][4])
+    context.driver.find_element(By.CSS_SELECTOR, '.verifyOTP').click()
+    time.sleep(2)

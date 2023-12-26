@@ -4,18 +4,21 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 import os
+import json
 
+with open('D:\BehaveProject\cred.json') as f:
+    data = json.load(f)
 
-@when('Instore Page Open')
+@when('the user opens the brand detail page')
 def openPage(context):
-    time.sleep(2)
-    context.driver.get("https://staging.savyour.com.pk/biz/Daraz.pk")
+    time.sleep(3)
+    context.driver.get(data['pkbrand'])
 
 
 @then('Verify Brand Card')
 # Card Image + Card Content
 def card(context):
-    time.sleep(2)
+    time.sleep(3)
     card = context.driver.find_element(By.CSS_SELECTOR, '.b_card')
     if card.is_displayed():
         print("Brand Card Found")
@@ -133,14 +136,14 @@ def Reviews(context):
 @then('Delete Own Review')
 # Delete Own Review
 def deleteReview(context):
-    time.sleep(2)
+    time.sleep(3)
     try:
-        review = context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review h2')
+        review = context.driver.find_element(By.CSS_SELECTOR, '.delete_review_btn')
         if review.is_displayed():
             time.sleep(2)
-            delet = context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review i.fa-trash-o')
-            delet.click()
-            time.sleep(2)
+            delete_review = context.driver.find_element(By.CSS_SELECTOR, '.delete_review_btn')
+            delete_review.click()
+            time.sleep(3)
             print("Review Has Been Deleted")
             context.driver.find_element(By.CSS_SELECTOR, '#deleteRecentReviewModal button.btn.btn-danger').click()
     except NoSuchElementException:
@@ -150,7 +153,7 @@ def deleteReview(context):
 @then('Write a Review')
 # Write a Review
 def writeReview(context):
-    time.sleep(2)
+    time.sleep(5)
     addrev = context.driver.find_element(By.CSS_SELECTOR, '#user-review-rating > div.rate-base-layer > span:nth-child(4)')
     context.driver.execute_script("return arguments[0].scrollIntoView(true);", addrev)
     if addrev.is_displayed():
@@ -176,23 +179,20 @@ def writeReview(context):
         time.sleep(3)
 
         context.driver.find_element(By.CSS_SELECTOR, '#add-review-submit').click()
+        time.sleep(10)
         print("Review Added Successfully")
 
-    time.sleep(3)
-    levelup = context.driver.find_element(By.CSS_SELECTOR, '#congratulateModal div.step-1 button')
-    if levelup.is_displayed():
-        levelup.click()
-    print("Level Up Popup Found & Clicked")
+        context.driver.find_element(By.CSS_SELECTOR, '#congratulateModal .step-1 button').click()
 
 @then('Adding Comment on Review')
 # Adding Comment on Review
 def adding_comment_on_review(context):
-    time.sleep(2)
+    time.sleep(5)
     comsec = context.driver.find_element(By.CSS_SELECTOR, '.user-comment-button')
     context.driver.execute_script("return arguments[0].scrollIntoView(true);", comsec)
     if comsec.is_displayed():
         comsec.click()
-        element = context.find_element_by_class_name('user-comment-button')
+        element = context.driver.find_element(By.CSS_SELECTOR, '.user-comment-button')
         data_id_value = element.get_attribute('data-id')
         comment = context.driver.find_element(By.CSS_SELECTOR, '#new-user-comment-'+str(data_id_value)+' > form > div > textarea')
         comment.click()
@@ -204,29 +204,33 @@ def adding_comment_on_review(context):
         print("Comment Has Been Added")
 
 
+@then('Like Comment')
+# Like Comment & Review
+def like_comment(context):
+    time.sleep(3)
+    try:
+        liksec = context.driver.find_element(By.CSS_SELECTOR, '.comment-helpful-button')
+        context.driver.execute_script("return arguments[0].scrollIntoView(true);", liksec)
+        if liksec.is_displayed():
+            time.sleep(2)
+            liksec.click()
+            print("Comment Marked Helpful")
+    except NoSuchElementException:
+        print("Like Button Not Exist")
+
+
 @then('Delete Comment if Exist')
 # Delete Comment if Exist
-def deleting_review_if_exist(context):
-    time.sleep(2)
-    fc = context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review span.dropdown-toggle')
-    context.driver.execute_script("return arguments[0].scrollIntoView(true);", fc)
-    if fc.is_displayed():
-        fc.click()
-        time.sleep(2)
-        comm = context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review div.review-more a')
-        comm.click()
-        time.sleep(2)
-        context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review button.btn-danger').click()
-        print("Your Previous Comment Has Been Deleted")
-
-
-@then('Like Comment & Review')
-# Like Comment & Review
-def like_comment_and_review(context):
+def deleting_review_comment_if_exist(context):
     time.sleep(3)
-    liksec = context.driver.find_element(By.CSS_SELECTOR, '#brand-detail .right_section > div.review .fa-thumbs-o-up')
-    context.driver.execute_script("return arguments[0].scrollIntoView(true);", liksec)
-    if liksec.is_displayed():
-        time.sleep(2)
-        liksec.click()
-        print("Review & Comment Marked Helpful")
+    try:
+        fc = context.driver.find_element(By.CSS_SELECTOR, '.comment-delete-button')
+        context.driver.execute_script("return arguments[0].scrollIntoView(true);", fc)
+        if fc.is_displayed():
+            fc.click()
+            time.sleep(2)
+            context.driver.find_element(By.CSS_SELECTOR, '#deleteComment').click()
+            print("Your Previous Comment Has Been Deleted")
+    except NoSuchElementException:
+        print("Delete Comment Button Not Exist")
+

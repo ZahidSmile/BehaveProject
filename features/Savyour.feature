@@ -39,3 +39,8 @@ Feature: User Navigation on Savyour Website
     Then Adding Comment on Review
     Then Like Comment
     And Delete Comment if Exist
+
+  Scenario: Withdraw Amount From Wallet
+    Given Open Wallet Page & Authorize
+    When the user edit account details
+    Then the user withdraw some amount
